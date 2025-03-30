@@ -1,0 +1,84 @@
+# Launch Caddy with this config https://oauth2-proxy.github.io/oauth2-proxy/configuration/integration/#configuring-for-use-with-the-caddy-v2-forward_auth-directive
+# Launch oauth2-proxy with --set-xauthrequest flag (env var SET_XAUTHREQUEST)
+# launch Keycloak
+# Needs 127.0.0.1    keycloak in the /etc/hosts file of the host OS (Macbook)
+
+services:
+  myservice:
+    image: containous/whoami
+    # ports:
+    #   - "8001:80"
+    networks:
+      - internal
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-file
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - internal
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    ports:
+      - "4180:4180"
+    environment:
+      OAUTH2_PROXY_PROVIDER: keycloak-oidc
+      OAUTH2_PROXY_CLIENT_ID: oauth2-proxy
+      OAUTH2_PROXY_CLIENT_SECRET: AtLefKVoKQ8jJIGRdKuFIGgDcYuu8SLH
+      OAUTH2_PROXY_COOKIE_SECRET: 5hj2IQxwt0F0bWB2gas43aC8GjMk4x2-Fe9YBYU0L8M=
+      OAUTH2_PROXY_REDIRECT_URL: http://caddy.local/oauth2/callback
+      OAUTH2_PROXY_ALLOWED_REDIRECT_URLS: http://caddy.local/*
+      OAUTH2_PROXY_OIDC_ISSUER_URL: http://keycloak:8080/realms/MyService
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_CODE_CHALLENGE_METHOD: S256
+      OAUTH2_PROXY_UPSTREAMS: file:///dev/null
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
+      OAUTH2_PROXY_LOGIN_URL: http://keycloak:8080/realms/MyService/protocol/openid-connect/auth
+      OAUTH2_PROXY_REDEEM_URL: http://keycloak:8080/realms/MyService/protocol/openid-connect/token
+      OAUTH2_PROXY_PROFILE_URL: http://keycloak:8080/realms/MyService/protocol/openid-connect/userinfo
+      OAUTH2_PROXY_VALIDATE_URL: http://keycloak:8080/realms/MyService/protocol/openid-connect/userinfo
+      OAUTH2_PROXY_SET_XAUTHREQUEST: true
+      OAUTH2_PROXY_PASS_ACCESS_TOKEN: true
+      OAUTH2_PROXY_PASS_USER_HEADERS: true
+      # These are set for local testing
+      OAUTH2_PROXY_COOKIE_SECURE: false
+      OAUTH2_PROXY_COOKIE_SAMESITE: lax
+      OAUTH2_PROXY_COOKIE_DOMAIN: caddy.local
+      OAUTH2_PROXY_SCOPE: openid email profile
+    # Restart when Keycloak not ready to serve up .well-known
+    restart: always
+    depends_on:
+      - keycloak
+    networks:
+      - internal
+
+  caddy:
+    image: caddy:2.9.1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - oauth2-proxy
+    networks:
+      - internal
+
+volumes:
+  keycloak_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:
+    driver: bridge

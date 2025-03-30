@@ -1,0 +1,50 @@
+{
+	auto_https off
+}
+
+http://caddy.local {
+	# Requests to /oauth2/* are proxied to oauth2-proxy without authentication.
+	handle /oauth2/* {
+		reverse_proxy oauth2-proxy:4180 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Uri {uri}
+		}
+	}
+
+	# For /admin/* paths: first authenticate, then check if user is in polis-admin group.
+	route /admin/* {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			header_up X-Real-IP {remote_host}
+			copy_headers X-Auth-Request-User X-Auth-Request-Email X-Auth-Request-Groups X-Auth-Request-Preferred-Username
+
+			@error status 401
+			handle_response @error {
+				redir * /oauth2/sign_in?rd={scheme}://{host}{uri}
+			}
+		}
+
+		@notAdmin not header X-Auth-Request-Groups *polis-admins*
+		handle @notAdmin {
+			respond "Forbidden: You must be polis-admin to access this." 403
+		}
+
+		reverse_proxy myservice:80
+	}
+
+	# For all other paths: only require authentication.
+	route /* {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			header_up X-Real-IP {remote_host}
+			copy_headers X-Auth-Request-User X-Auth-Request-Email X-Auth-Request-Groups X-Auth-Request-Preferred-Username
+
+			@error status 401
+			handle_response @error {
+				redir * /oauth2/sign_in?rd={scheme}://{host}{uri}
+			}
+		}
+
+		reverse_proxy myservice:80
+	}
+}
