@@ -1,0 +1,14 @@
+{
+  "realm": "MyService",
+  "auth-server-url": "http://keycloak:8080/",
+  "ssl-required": "external",
+  "resource": "oauth2-proxy",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "AtLefKVoKQ8jJIGRdKuFIGgDcYuu8SLH"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {
+    "credentials": {}
+  }
+}
