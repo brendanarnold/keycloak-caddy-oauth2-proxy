@@ -4,13 +4,21 @@
 - Keycloak authorises and sets roles
 - Oauth2-Proxy maps claims to headers, handles OIDC for Caddy
 
-## Keycloak setup
+## Setup
 
-- Keycloak to supply the 'group' claim with user groups
-- Users need to be email verified
-- Client ID is oauth2-proxy in this case
-- Import `realm-export.json` to re-create the realm
-- Import `oauth2-proxy-client-export.json` to re-create the client (oauth2-proxy)
+Add `127.0.0.1    caddy.local` to `/etc/hosts`
+
+Run `docker compose up`
+
+Import the Keycloak realm and client into Keycloak
+
+visit http://caddy.local - it should redirect to sign-in
+
+Should be a register link, create two users
+
+In Keycloak verify their emails, add one to the `polis-admins` group
+
+`polis-admin` user should be able to visit http://caddy.local/admin - other user should get a 403 but should be able to visit other paths on the site
 
 ## Gotchas
 
