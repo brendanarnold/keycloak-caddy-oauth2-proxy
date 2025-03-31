@@ -1586,7 +1586,52 @@
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
-  "identityProviders": [],
+  "identityProviders": [
+    {
+      "alias": "onelogin",
+      "displayName": "One Login",
+      "internalId": "2a9ed4d3-223b-4f73-a35d-20f639550a6d",
+      "providerId": "oidc",
+      "enabled": true,
+      "updateProfileFirstLoginMode": "on",
+      "trustEmail": false,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "config": {
+        "tokenUrl": "https://oidc.integration.account.gov.uk/token",
+        "acceptsPromptNoneForwardFromClient": "false",
+        "jwksUrl": "https://oidc.integration.account.gov.uk/.well-known/jwks.json",
+        "isAccessTokenJWT": "false",
+        "clientAssertionAudience": "https://oidc.integration.account.gov.uk/token",
+        "filteredByClaim": "false",
+        "jwtX509HeadersEnabled": "false",
+        "backchannelSupported": "false",
+        "issuer": "https://oidc.integration.account.gov.uk/",
+        "loginHint": "false",
+        "clientAuthMethod": "private_key_jwt",
+        "clientAssertionSigningAlg": "RS256",
+        "syncMode": "IMPORT",
+        "allowedClockSkew": "0",
+        "userInfoUrl": "https://oidc.integration.account.gov.uk/userinfo",
+        "validateSignature": "true",
+        "hideOnLoginPage": "false",
+        "clientId": "tPUoVlSRAVaLTxpsd8077KN8i5o",
+        "uiLocales": "false",
+        "disableNonce": "false",
+        "useJwksUrl": "true",
+        "sendClientIdOnLogout": "false",
+        "pkceEnabled": "false",
+        "metadataDescriptorUrl": "https://oidc.integration.account.gov.uk/.well-known/openid-configuration",
+        "authorizationUrl": "https://oidc.integration.account.gov.uk/authorize",
+        "disableUserInfo": "false",
+        "logoutUrl": "https://oidc.integration.account.gov.uk/logout",
+        "sendIdTokenOnLogout": "true",
+        "passMaxAge": "false"
+      }
+    }
+  ],
   "identityProviderMappers": [],
   "components": {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
@@ -1697,6 +1742,20 @@
       }
     ],
     "org.keycloak.keys.KeyProvider": [
+      {
+        "id": "6368b472-a465-4cdf-a1d5-520ce510d0c1",
+        "name": "fallback-ES256",
+        "providerId": "ecdsa-generated",
+        "subComponents": {},
+        "config": {
+          "ecdsaEllipticCurveKey": [
+            "P-256"
+          ],
+          "priority": [
+            "-100"
+          ]
+        }
+      },
       {
         "id": "3e62c174-d447-4e5c-9452-572ea969f342",
         "name": "rsa-generated",

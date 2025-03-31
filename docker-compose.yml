@@ -53,6 +53,7 @@ services:
       OAUTH2_PROXY_COOKIE_SAMESITE: lax
       OAUTH2_PROXY_COOKIE_DOMAIN: caddy.local
       OAUTH2_PROXY_SCOPE: openid email profile
+      OAUTH2_PROXY_SHOW_DEBUG_ON_ERROR: true
     # Restart when Keycloak not ready to serve up .well-known
     restart: always
     depends_on:
