@@ -6,7 +6,12 @@
 
 ## Setup
 
-Add `127.0.0.1    caddy.local` to `/etc/hosts`
+Add the following to the host computer (laptop) `/etc/hosts`
+
+```
+127.0.0.1    caddy.local
+127.0.0.1    keycloak
+```
 
 Run `docker compose up`
 
