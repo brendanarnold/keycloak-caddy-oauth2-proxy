@@ -23,6 +23,8 @@ Run `docker compose up`
 
 Import the Keycloak realm and client into Keycloak
 
+Copy the Keycloak realm key (S256) into One Login and update the Client ID in Keycloak to your own from One Login.
+
 visit http://caddy.local - it should redirect to sign-in
 
 Should be a register link, create two users
