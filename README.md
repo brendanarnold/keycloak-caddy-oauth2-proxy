@@ -37,8 +37,8 @@ In Keycloak verify their emails, add one to the `polis-admins` group
 
 There are example keys in the project so that it will work locally out of the box. **Make sure to [generate your own cookie secret](https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/#generating-a-cookie-secret) if you want to use this configuration for deployment**
 
-### Caddy
+Oauth2-proxy polls the OIDC provider on startup for the config at `.well-known`, it fails to launch if not found - Keycloak takes a few second to boot up and so you may want to auto restart on failure
 
-Response matchers (used in `handle_response`) are very limited. Request matchers (used in `handle`) are needed to access e.g. `not`
+Caddy response matchers (used in `handle_response`) are very limited. Request matchers (used in `handle`) are needed to access e.g. `not`
 
-`forward_auth` can only have response directives
+Caddy's  `forward_auth` directive block can only have response directives
