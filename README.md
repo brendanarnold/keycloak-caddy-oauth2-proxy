@@ -19,11 +19,13 @@ Add the following to the host computer (laptop) `/etc/hosts`
 127.0.0.1    keycloak
 ```
 
+Regenerate a client ID from One Login and add to `OAUTH2_PROXY_CLIENT_SECRET` in `docker-compose.yml`
+
 Run `docker compose up`
 
-Import the Keycloak realm and client into Keycloak
+Import the Keycloak realm and client JSON files into Keycloak
 
-Copy the Keycloak realm key (S256) into One Login and update the Client ID in Keycloak to your own from One Login.
+Copy the Keycloak RS256 public realm key, under Realm Settings into One Login and update the Client ID in Keycloak to your own from One Login.
 
 visit http://caddy.local - it should redirect to sign-in
 
@@ -31,7 +33,7 @@ Should be a register link, create two users
 
 In Keycloak verify their emails, add one to the `polis-admins` group
 
-`polis-admin` user should be able to visit http://caddy.local/admin - other user should get a 403 but should be able to visit other paths on the site
+`polis-admin` user should be able to visit http://caddy.local/admin/ - other user should get a 403 but should be able to visit other paths on the site
 
 ## Gotchas
 
@@ -42,3 +44,7 @@ Oauth2-proxy polls the OIDC provider on startup for the config at `.well-known`,
 Caddy response matchers (used in `handle_response`) are very limited. Request matchers (used in `handle`) are needed to access e.g. `not`
 
 Caddy's  `forward_auth` directive block can only have response directives
+
+When logging in you may get an 'email not validated' error - normally a Keycloak workflow can verify this, it can be disabled or you can just go into Keycloak and find the user and manually check 'Email verified'
+
+Make sure you have the right realm selected 'MyService'
